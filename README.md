@@ -1,3 +1,92 @@
+# note: this webOS port was developed with significant assistance from ChatGPT as a proof of concept. ChatGPT was used throughout development to help understand the existing platform ports, write and adapt code, troubleshoot webOS SDK/CMake/toolchain issues, and debug the build. The resulting code was tested locally using the webOS SDK.
+
+# SUPPORTS ONLY WITH CONTROLLER COULDN'T FIX THE BACK ACTION THAT HAPPENS WITH B BUTTON BUT YOU COULD RUN CONTROLLER CONFIG AND CHANGE THE KEYMAPS INSIDE THE GAME ALSO YOU NEED 1.08 VERSION OF THE GAME.
+
+
+
+## current status:
+
+The port successfully builds using the webOS SDK and produces a 32-bit ARM EABI5 executable.
+
+A prebuilt `butterscotch` executable is provided for users who want to test the port without building it themselves.
+
+The port has been tested through the build process, ran on webos23. open to test results.
+
+(likely more issues)
+
+## how to use the prebuilt executable:
+
+1. Create/install the Butterscotch package on your webOS device.
+
+2. Obtain the game files for the game you want to run. `data.win` is the bare minimum required game file, but other game files may also be required depending on the game.
+
+3. Find the installed Butterscotch application directory on the webOS device.
+
+4. Copy the game files into the installed application's directory using `scp`. For example:
+
+   `scp -r <game-files> root@<device-ip>:<installed-app-path>/`
+
+   The game files need to be placed alongside the `butterscotch` executable so that Butterscotch can find them.
+
+5. Launch Butterscotch from the webOS launcher.
+
+## how to build:
+
+1. Install the webOS SDK / Homebrew SDK and its required dependencies.
+2. Source the webOS SDK environment.
+3. Clone this repository.
+4. Make sure the system CMake is being used:
+
+   `/usr/bin/cmake`
+
+5. Configure the build:
+
+   `/usr/bin/cmake -S . -B build-webos -DPLATFORM=webos -DENABLE_MODERN_GL=ON`
+
+6. Build:
+
+   `/usr/bin/cmake --build build-webos`
+
+This produces:
+
+`build-webos/butterscotch`
+
+## how to package and install:
+
+After building the executable, it can be packaged into an `.ipk` using the Ares tools.
+
+1. Create a package directory containing:
+
+   - `butterscotch`
+   - `appinfo.json`
+   - `icon.png`
+
+2. Package the application:
+
+   `ares-package <package-directory>`
+
+   This generates an `.ipk` package.
+
+3. Install the generated package on your webOS device:
+
+   `ares-install <package>.ipk`
+
+4. Launch the application:
+
+   `ares-launch <app-id>`
+
+   or launch it from the webOS launcher.
+
+5. After installation, copy the game's files into the installed application's directory using `scp`:
+
+   `scp -r <game-files> root@<device-ip>:<installed-app-path>/`
+
+   `data.win` is the bare minimum, but the complete set of game files should be copied when required by the game.
+
+The webOS SDK environment must be sourced so that `ares-package`, `ares-install`, and `ares-launch` are available.
+
+## original readme:
+
 <div align="center">
 <img width="256" height="256" alt="Butterscotch Logo" src="https://github.com/user-attachments/assets/ef8bdd5c-d407-4b3c-a4d5-07b25e8bbc70" />
 </div>
