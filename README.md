@@ -1,49 +1,31 @@
-# note: this webOS port was developed with significant assistance from ChatGPT as a proof of concept. ChatGPT was used throughout development to help understand the existing platform ports, write and adapt code, troubleshoot webOS SDK/CMake/toolchain issues, and debug the build. The resulting code was tested locally using the webOS SDK.
+# note: this webOS port was developed with significant assistance from ChatGPT as a proof of concept. ChatGPT was used throughout development to understand the existing platform ports, write and adapt code, troubleshoot webOS SDK/CMake/toolchain issues, and debug the build.
 
-# SUPPORTS ONLY WITH CONTROLLER COULDN'T FIX THE BACK ACTION THAT HAPPENS WITH B BUTTON BUT YOU COULD RUN CONTROLLER CONFIG AND CHANGE THE KEYMAPS INSIDE THE GAME ALSO YOU NEED 1.08 VERSION OF THE GAME.
-
-
+# CONTROLLER REQUIRED. The B button triggers the webOS Back action. Use the in-game controller configuration to remap the controls. Tested with Undertale 1.08.
 
 ## current status:
 
 The port successfully builds using the webOS SDK and produces a 32-bit ARM EABI5 executable.
 
-A prebuilt `butterscotch` executable is provided for users who want to test the port without building it themselves.
-
-The port has been tested through the build process, ran on webos23. open to test results.
+The port has been tested on webOS 23. Further testing is welcome.
 
 (likely more issues)
 
-## how to use the prebuilt executable:
+## how to use:
 
-1. Create/install the Butterscotch package on your webOS device.
-
-2. Obtain the game files for the game you want to run. `data.win` is the bare minimum required game file, but other game files may also be required depending on the game.
-
-3. Find the installed Butterscotch application directory on the webOS device.
-
-4. Copy the game files into the installed application's directory using `scp`. For example:
-
-   `scp -r <game-files> root@<device-ip>:<installed-app-path>/`
-
-   The game files need to be placed alongside the `butterscotch` executable so that Butterscotch can find them.
-
-5. Launch Butterscotch from the webOS launcher.
+1. Install the Butterscotch `.ipk`.
+2. Copy the required game files to the installed application's directory using `scp`.
+3. `data.win` is the minimum required file, but other game files may also be required depending on the game.
+4. Launch Butterscotch from the webOS launcher.
 
 ## how to build:
 
-1. Install the webOS SDK / Homebrew SDK and its required dependencies.
-2. Source the webOS SDK environment.
-3. Clone this repository.
-4. Make sure the system CMake is being used:
-
-   `/usr/bin/cmake`
-
-5. Configure the build:
+1. Install and source the webOS SDK / Homebrew SDK.
+2. Clone this repository.
+3. Configure with:
 
    `/usr/bin/cmake -S . -B build-webos -DPLATFORM=webos -DENABLE_MODERN_GL=ON`
 
-6. Build:
+4. Build with:
 
    `/usr/bin/cmake --build build-webos`
 
@@ -53,39 +35,31 @@ This produces:
 
 ## how to package and install:
 
-After building the executable, it can be packaged into an `.ipk` using the Ares tools.
-
-1. Create a package directory containing:
-
+1. Prepare a package directory containing:
    - `butterscotch`
    - `appinfo.json`
    - `icon.png`
 
-2. Package the application:
+2. Package it:
 
    `ares-package <package-directory>`
 
-   This generates an `.ipk` package.
-
-3. Install the generated package on your webOS device:
+3. Install it:
 
    `ares-install <package>.ipk`
 
-4. Launch the application:
+4. Launch it:
 
    `ares-launch <app-id>`
 
-   or launch it from the webOS launcher.
-
-5. After installation, copy the game's files into the installed application's directory using `scp`:
+5. Copy the required game files into the installed application directory:
 
    `scp -r <game-files> root@<device-ip>:<installed-app-path>/`
 
-   `data.win` is the bare minimum, but the complete set of game files should be copied when required by the game.
-
-The webOS SDK environment must be sourced so that `ares-package`, `ares-install`, and `ares-launch` are available.
+The webOS SDK environment must be sourced so that the Ares tools are available.
 
 ## original readme:
+
 
 <div align="center">
 <img width="256" height="256" alt="Butterscotch Logo" src="https://github.com/user-attachments/assets/ef8bdd5c-d407-4b3c-a4d5-07b25e8bbc70" />
@@ -155,7 +129,7 @@ Of course, there are exceptions that break game compatibility altogether:
 * ...and maybe more in the future!
 
 Additionally, any platform with reasonably complete C and POSIX conformance should work, the following have been tested.
-* Linux with glibc as old as about ~1995
+* Linux with glibc as old as about ~1996
 * FreeBSD as old as 2.2.8
 * Haiku
 
@@ -182,11 +156,11 @@ The following compilers have been tested to successfully build butterscotch, old
 
 ```bash
 mkdir build && cd build
-cmake -DBACKEND=glfw3 -DCMAKE_BUILD_TYPE=Debug ..
+cmake -DPLATFORM=desktop -DDESKTOP_BACKEND=glfw3 -DCMAKE_BUILD_TYPE=Debug ..
 make
 ```
 
-If you are using CLion, set the platform in `Settings` > `Build, Execution, Deployment` > `CMake` and add `-DBACKEND=glfw3`
+If you are using CLion, set the platform in `Settings` > `Build, Execution, Deployment` > `CMake` and add `-DDESKTOP_BACKEND=glfw3`
 
 Then run Butterscotch with `./butterscotch /path/to/data.win`!
 
