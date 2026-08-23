@@ -354,7 +354,8 @@ static bool startRunner(const char *dataWinPath, const char *savesPath)
         vm,
         renderer,
         (FileSystem *)overlayFs,
-        audioSystem
+        audioSystem,
+        0
     );
 
     if (gRunner == NULL) {
@@ -488,6 +489,19 @@ static void updateWebOSGamepad(void)
     }
 
     gRunner->gamepads->connectedCount = 1;
+
+    if (gInputLog != NULL) {
+    fprintf(
+        gInputLog,
+        "RUNNER: count=%d connected=%d axes=%d buttons=%d desc=%s\n",
+        RunnerGamepad_getDeviceCount(gRunner->gamepads),
+        RunnerGamepad_isConnected(gRunner->gamepads, 0),
+        RunnerGamepad_getAxisCount(gRunner->gamepads, 0),
+        RunnerGamepad_getButtonCount(gRunner->gamepads, 0),
+        RunnerGamepad_getDescription(gRunner->gamepads, 0)
+    );
+    fflush(gInputLog);
+}
 
     if (gInputLog != NULL) {
         int a = SDL_GameControllerGetButton(
